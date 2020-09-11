@@ -1,139 +1,110 @@
 
 const CustomError = require("../extensions/custom-error");
 const arrKey = ['--discard-next','--discard-prev','--double-next','--double-prev'];
-/*
-const disNext = '--discard-next';
-const disPrev = '--discard-prev';
-const dblNext = '--double-next';
-const dblPrev = '--double-prev';
-*/
-
-const disNext = arrKey[0];
-const disPrev = arrKey[1];
-const dblNext = arrKey[2];
-const dblPrev = arrKey[3];
-
+const disNext = arrKey[0];  //checked
+const disPrev = arrKey[1];  //checked
+const dblNext = arrKey[2];  //checked
+const dblPrev = arrKey[3];  //checked
 let copyArr;
-let finelarr;
 
-
-module.exports = function transform(arr) {
-  
-  // throw new CustomError('Not implemented');
-  // remove line with error and write your code here
-
-
-
-  /*
-
-let a=[ 'DEF', 1, '--double-prev' ] ; //[ '--discard-next', 'DEF' ];
-
-transform(a);   //[ Array(8) ]
-
-function transform(arr) {
-
-
-*/
-
-  //console.log(arr);
-  //copyArr=arr.slice();
-  copyArr=deepCopyFunction(arr);
-
-  /*
-  if(is2dArray(arr)){
-    throw new CustomError('Error');
-  }
+  /* I'll be honest with you, I didn't create this funtion by myself
+     the deepCopy is too deep shit for me right now, though I figured out that there is a problem
+     with my arrays because of copying. Cause I saw that in console.log I have a good result, but
+     on test on the same array I can see those --dbl-nxt elements that I delited.
+     I Googled for deep copy; 
+     https://medium.com/javascript-in-plain-english/how-to-deep-copy-objects-and-arrays-in-javascript-7c911359b089
   */
-  //copyArr=JSON.parse(JSON.stringify(arr));
 
-if(!Array.isArray(arr)){
-  throw new Error('Error');
-}
-if(arr.length<=0){
-  //throw new Error('Error');
-  return [];
-}
+ const deepCopyFunction = (inObject) => {
+  let outObject, value, key
 
-let kApArr = getKeyAndPos(arr);
-//console.log(kApArr);
-getResArr(kApArr);
+  if (typeof inObject !== "object" || inObject === null) {
+    return inObject // Return the value if inObject is not an object
+  }
 
-//console.log(finalArr(copyArr));
-//console.log(arr);
-return finalArr(copyArr);
-};
+  // Create an array or object to hold the values
+  outObject = Array.isArray(inObject) ? [] : {}
+
+  for (key in inObject) {  
+    value = inObject[key]
+
+    // Recursively (deep) copy for nested objects, including arrays
+    outObject[key] = deepCopyFunction(value)
+  }
+
+  return outObject
+} 
+
+function isFunction(functionToCheck) {
+  return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
+ }
 
 function getKeyAndPos(arr){
   let temp=[];
   let flag=0;
   for(elem of arr){
-    
     if(arrKey.indexOf(elem)!=-1){
-      if(!(typeof elem ==='string')){
-        continue;
-      }
       temp.push([deepCopyFunction(elem), arr.indexOf(elem)]);
       flag=1;
-    } 
+    }  
   }
-  if(!flag){
-    throw new CustomError('Error');
+  if(flag){
+    return temp;
+  }else{
+    return -1;
   }
-  return temp;
 }
 
 function disNextF(pos){
   if(copyArr.length-1==pos){
-    copyArr.splice(pos,1,'del');
-    //copyArr[pos]='del';
+    //copyArr.splice(pos,1,undefined);      *****
+    copyArr[pos]=undefined;
     return;
   }
-  copyArr.splice(pos,1,'del');
-  copyArr.splice(pos+1,1,'del');
- // copyArr[pos]='del';
-  //copyArr[pos+1]='del';
+  //copyArr.splice(pos+1,1, undefined);     *****
+  copyArr[pos+1]=undefined;
+  //copyArr.splice(pos,1,undefined);        *****
+  copyArr[pos]=undefined;
   return;
 }
 
 function disPrevF(pos){
   if(pos==0){
-    copyArr.splice(pos,1,'del');
-    //copyArr[pos]='del';
+    //copyArr.splice(pos,1,undefined);        *****
+    copyArr[pos]=undefined;
     return;
   }
-  copyArr.splice(pos,1,'del');
-  copyArr.splice(pos-1,1,'del');
-  //copyArr[pos]='del';
-  //copyArr[pos-1]='del';
+  //copyArr.splice(pos-1,1,undefined);      *****
+  copyArr[pos-1]=undefined;
+  //copyArr.splice(pos,1,undefined);        *****
+  copyArr[pos]=undefined;
   return;
 }
 
 function dblNextF(pos){
   if(copyArr.length-1==pos){
-    copyArr.splice(pos,1,'del');
-    //copyArr[pos]='del';
+    //copyArr.splice(pos,1,undefined);   *****
+    copyArr[pos]=undefined;
     return;
   }
   copyArr.splice(pos,1,deepCopyFunction(copyArr[pos+1]));
-  //copyArr[pos]=deepCopyFunction(copyArr[pos+1]);//copyArr.slice(pos+1, pos+2);
   return;
 }
 
 function dblPrevF(pos){
   if(pos==0){
-    copyArr.splice(pos,1,'del');
-    //copyArr[pos]='del';
+    //copyArr.splice(pos,1,undefined);   *****
+    copyArr[pos]=undefined;
     return;
   }
   copyArr.splice(pos,1,deepCopyFunction(copyArr[pos-1]));
-  //copyArr[pos]=deepCopyFunction(copyArr[pos-1]);//copyArr.slice(pos-1, pos);
+
   return;
 }
 
 function getResArr(keyAndposArr){
   check(keyAndposArr);
   for(elem of keyAndposArr){
-    //
    callFunc(elem);
   }
 }
@@ -151,30 +122,7 @@ function callFunc(elem){
 }
 
 function finalArr(arr){
-  let temp=[];
-  
-  for(elem of arr){
-    
-    if(elem!='del'){
-      //let el=arr.slice(arr.indexOf(elem),1);
-      temp.push(deepCopyFunction(elem));
-    }
-    
-  }
-  
-  /*
-  let j=0;
-  for(let i=0;i<arr.length;i++){
-    if(arr[i]!='del'){
-      temp[j]=arr[i];
-      j++;
-    }
-
-  }
-  if(temp.length<=0){
-    return [];
-  }
-  */
+  const temp = arr.filter(elem => elem!=undefined);
   return temp;
 }
 
@@ -192,36 +140,43 @@ function check(arrOfKeys){
        (arrOfKeys[i]==disNext&&arrOfKeys[i+2]==disPrev)//||
       // (arrOfKeys[i]==disNext&&arrOfKeys[i+2]==dblPrev)
       ){
-      //copyArr[i+2]='del';
-      copyArr.splice((i+2),1,'del');
-      arrOfKeys[i+2]='';
-      }
+      //copyArr.splice((i+2),1,undefined);    *****
+      copyArr[i+2]=undefined;
+      arrOfKeys[i+2]=undefined;
+    }
+  }
+} 
 
-    }
-  } 
-  /* I'll be honest with you, I didn't create this funtion by myself
-     the deepCopy is too deep shit for me right now, though I figured out that there is a problem
-     with my arrays because of copying. Cause I saw that in console.log I have a good result, but
-     on test on the same array I can see those --dbl-nxt elements that I delited.
-     I Googled for deep copy; 
-     https://medium.com/javascript-in-plain-english/how-to-deep-copy-objects-and-arrays-in-javascript-7c911359b089
-  */
-  const deepCopyFunction = (inObject) => {
-    let outObject, value, key
-  
-    if (typeof inObject !== "object" || inObject === null) {
-      return inObject // Return the value if inObject is not an object
-    }
-  
-    // Create an array or object to hold the values
-    outObject = Array.isArray(inObject) ? [] : {}
-  
-    for (key in inObject) {  
-      value = inObject[key]
-  
-      // Recursively (deep) copy for nested objects, including arrays
-      outObject[key] = deepCopyFunction(value)
-    }
-  
-    return outObject
-  } 
+module.exports = function transform(arr) {
+  // throw new CustomError('Not implemented');
+  // remove line with error and write your code here
+/*
+
+let a=[ 'DEF', {} , [is2dArray([[1,5]])], ] ; //[ '--discard-next', 'DEF' ];
+
+transform(a);   //[ Array(8) ]
+
+function transform(arr) {
+
+*/
+
+copyArr=deepCopyFunction(arr);
+
+if(!Array.isArray(arr)){
+  throw new Error('Error');
+}
+if(arr.length<=0){
+  return arr;
+}
+
+let kApArr = getKeyAndPos(arr);
+
+if(kApArr==-1){
+  return arr;
+} 
+//console.log(kApArr);
+getResArr(kApArr);
+//console.log(finalArr(copyArr));
+//console.log(arr);
+return finalArr(copyArr);
+};
