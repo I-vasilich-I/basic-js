@@ -4,10 +4,11 @@ module.exports = function getSeason(date) {
   //throw new CustomError('Not implemented');
   // remove line with error and write your code here
   const season = ['winter','spring','summer','fall'];
-  //if(date=undefined){  //intresting... eccedentaly put there = instead of == and have got the check for a very tricky moment.
   if(date===undefined){   
     return 'Unable to determine the time of year!';
   }
+  date.getUTCDate();
+  //isArealDate(date);  //leave it there, 'cause why not?
   let month = date.getMonth();
   if(month>=0&&month<=1||month==11){
     return season[0];
@@ -18,8 +19,11 @@ module.exports = function getSeason(date) {
   }else if(month>=8&&month<=10){
     return season[3];
   }
- 
- if(false){
-   throw new Error('Gotcha, you\'re not so tricky after all');
-  }
 }
+/*
+function isArealDate(date){
+  JSON.stringify(date); //worked too.
+  date.toString();  //this one doesn't work, probably because the method toString() was defined on fake Date. 
+  date.getUTCDate(); //working
+}
+*/
