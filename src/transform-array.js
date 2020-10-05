@@ -7,14 +7,13 @@ const dblNext = arrKey[2];  //checked
 const dblPrev = arrKey[3];  //checked
 let copyArr;
 
-  /* I'll be honest with you, I didn't create this funtion by myself
+  /* I'll be honest with you, I didn't create this funtion.
      the deepCopy is too deep shit for me right now, though I figured out that there is a problem
-     with my arrays because of copying. Cause I saw that in console.log I have a good result, but
-     on test on the same array I can see those --dbl-nxt elements that I delited.
+     with my arrays because of copying. Cause I saw in console.log that I have a good result, but
+     on test on the same array I've seen those --dbl-nxt elements that should have been delited.
      I Googled for deep copy; 
      https://medium.com/javascript-in-plain-english/how-to-deep-copy-objects-and-arrays-in-javascript-7c911359b089
   */
-
  const deepCopyFunction = (inObject) => {
   let outObject, value, key
 
@@ -35,18 +34,12 @@ let copyArr;
   return outObject
 } 
 
-function isFunction(functionToCheck) {
-  return functionToCheck && {}.toString.call(functionToCheck) === '[object Function]';
- }
-
 function getKeyAndPos(arr){
   let temp=[];
   let flag=0;
-  for(elem of arr){
-    if(arrKey.indexOf(elem)!=-1){
-      temp.push([deepCopyFunction(elem), arr.indexOf(elem)]);
+  for(let i=0;i<arr.length;i++){
+      temp.push([deepCopyFunction(arr[i]), i]);
       flag=1;
-    }  
   }
   if(flag){
     return temp;
@@ -126,14 +119,6 @@ function finalArr(arr){
   return temp;
 }
 
-function is2dArray(array){
-  if(array[0] === undefined){
-    return false;
-  }else{
-    return (array[0].constructor === Array);
-  }
-}
-
 function check(arrOfKeys){
   for(let i=0;i<arrOfKeys.length-1;i++){
     if(//(arrOfKeys[i]==dblNext&&arrOfKeys[i+2]==disPrev)||
@@ -150,16 +135,6 @@ function check(arrOfKeys){
 module.exports = function transform(arr) {
   // throw new CustomError('Not implemented');
   // remove line with error and write your code here
-/*
-
-let a=[ 'DEF', {} , [is2dArray([[1,5]])], ] ; //[ '--discard-next', 'DEF' ];
-
-transform(a);   //[ Array(8) ]
-
-function transform(arr) {
-
-*/
-
 copyArr=deepCopyFunction(arr);
 
 if(!Array.isArray(arr)){
@@ -168,15 +143,11 @@ if(!Array.isArray(arr)){
 if(arr.length<=0){
   return arr;
 }
-
 let kApArr = getKeyAndPos(arr);
 
 if(kApArr==-1){
   return arr;
 } 
-//console.log(kApArr);
 getResArr(kApArr);
-//console.log(finalArr(copyArr));
-//console.log(arr);
 return finalArr(copyArr);
 };
