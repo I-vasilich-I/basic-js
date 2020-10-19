@@ -4,6 +4,7 @@ module.exports = function countCats(arr) {
   //throw new CustomError('Not implemented');
   // remove line with error and write your code here
   let count=0;
+  /*
   if(typeof arr=="undefined"&&arr==null&&arr.length==null&&arr.length==0){
     return count;
   } 
@@ -13,6 +14,15 @@ module.exports = function countCats(arr) {
       if(ear[j]=='^^'){
         count++;
       }
+    }
+  }
+  did review of all tasks in basic-js. Want to edit this one.*/ 
+  if(typeof arr=="undefined"||arr==null||arr.length==null||arr.length==0){
+    return count;
+  }
+  for (elem of arr) {
+    for (element of elem) {
+      if (element=='^^') count++;
     }
   }
   return count;
